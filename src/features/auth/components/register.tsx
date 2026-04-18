@@ -3,7 +3,7 @@ import { Form } from "@/shared/components/ui/form";
 import { Input } from "@/shared/components/ui/input";
 import { Link } from "react-router-dom";
 import { useForm, useWatch } from "react-hook-form";
-import { getLocationName } from "../services/locationApi";
+import { getLocationName } from "@/features/auth/services/locationApi";
 const RegisterForm = () => {
   const form = useForm({
     defaultValues: {
@@ -243,21 +243,21 @@ const RegisterForm = () => {
       </div>
 
           {/* Image */}
-      {/* <div className="hidden md:block w-1/2 relative">
+      <div className="hidden md:block w-1/2 relative">
         <img
           src="/auth_image2.jpeg"
           className="h-full w-full object-cover"
         />
         <div className="absolute inset-0 bg-black/30" />
-      </div> */}
+      </div>
             {/* image*/}
-      <div className="hidden w-1/2 md:block">
+      {/* <div className="hidden w-1/2 md:block">
         <img
           src="/auth_image2.jpeg"
           alt="login"
-          className="h-screen w-full object-cover"
+          className="h-full w-full object-cover "
         />
-      </div>
+      </div> */}
     </div>
   );
 };

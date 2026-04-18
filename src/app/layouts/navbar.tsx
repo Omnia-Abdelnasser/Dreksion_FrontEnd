@@ -1,162 +1,98 @@
-import { ThemeToggler } from "@/shared/components/theme-toggler";
 import { useState } from "react";
-import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Menu, X, Car } from "lucide-react";
+import { Button } from "@/shared/components/ui/button";
+import { cn } from "@/lib/utils";
 
-const Nav = () => {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState("home");
+const sections = [
+  { id: "home", label: "الرئيسية" },
+  { id: "how-it-works", label: "كيف تبدأ" },
+  { id: "basics", label: "الدروس" },
+  { id: "instructors", label: "المدربين" },
+  { id: "contact", label: "تواصل معنا" },
+];
 
-  const sections = [
-    { id: "home", label: "الرئيسية" },
-    { id: "instructors", label: "المدربين" },
-    { id: "how-it-works", label: "كيف تبدأ" },
-    { id: "features", label: "المميزات" },
-    { id: "contact", label: "تواصل معنا" },
-  ];
+const Navbar = () => {
+  const [open, setOpen] = useState(false);
+  const [active, setActive] = useState("home");
 
-  const handleSmoothScroll = (e: React.MouseEvent, section: string) => {
+  const scrollTo = (e: React.MouseEvent, id: string) => {
     e.preventDefault();
-    setActiveSection(section);
-
-    const el = document.getElementById(section);
-    if (el) el.scrollIntoView({ behavior: "smooth" });
-
-    setMobileMenuOpen(false);
+    setActive(id);
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+    setOpen(false);
   };
 
   return (
-    <nav dir="rtl" className="fixed top-0 left-0 w-full z-50">
-      {/* Glass Bar */}
-      <div
-        className="
-        backdrop-blur-xl 
-        bg-white/70 dark:bg-black/50
-        border-b border-gray-200 dark:border-white/10
-      "
-      >
-        <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-          {/* Logo */}
-          <div className="font-semibold text-lg text-gray-800 dark:text-white">
-            مدرسة القيادة الذكية
-          </div>
+    <header className="fixed top-0 inset-x-0 z-50 px-4 pt-4">
+      <nav className="glass max-w-7xl mx-auto rounded-2xl px-6 py-3 flex items-center justify-between shadow-elegant">
+        <a href="#home" className="flex items-center gap-2 font-bold text-lg">
+          <span className="w-9 h-9 rounded-xl bg-gradient-primary flex items-center justify-center shadow-glow">
+            <Car className="w-5 h-5 text-primary-foreground" />
+          </span>
+          <span className="text-gradient">القيادة الذكية</span>
+        </a>
 
-          {/* Desktop Links */}
-          <div className="hidden md:flex items-center gap-4">
-            {sections.map((section) => (
+        <ul className="hidden md:flex items-center gap-1">
+          {sections.map((s) => (
+            <li key={s.id}>
               <a
-                key={section.id}
-                href={`#${section.id}`}
-                onClick={(e) => handleSmoothScroll(e, section.id)}
-                className={`
-                  relative px-3 py-1.5 text-sm font-medium transition
-                  ${
-                    activeSection === section.id
-                      ? "text-[#00E5FF]"
-                      : "text-gray-600 dark:text-gray-300 hover:text-[#00E5FF]"
-                  }
-                `}
+                href={`#${s.id}`}
+                onClick={(e) => scrollTo(e, s.id)}
+                className={cn(
+                  "relative px-4 py-2 text-sm font-medium rounded-lg transition-smooth",
+                  active === s.id
+                    ? "text-primary"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
               >
-                {section.label}
-
-                {activeSection === section.id && (
-                  <motion.div
-                    layoutId="underline"
-                    className="absolute bottom-0 right-0 left-0 h-[2px] bg-[#00E5FF] rounded-full"
-                  />
+                {s.label}
+                {active === s.id && (
+                  <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-primary shadow-glow" />
                 )}
               </a>
-            ))}
-          </div>
+            </li>
+          ))}
+        </ul>
 
-          {/* Right Side */}
-          <div className="flex items-center gap-3">
-            <ThemeToggler />
-
-            {/* Auth Buttons (Desktop) */}
-            <div className="hidden md:flex items-center gap-2">
-              <Link
-                to="/login"
-                className="px-4 py-1.5 text-sm font-medium text-gray-700 dark:text-white border border-gray-300 dark:border-white/20 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 transition"
-              >
-                تسجيل الدخول
-              </Link>
-
-              <Link
-                to="/register"
-                className="px-4 py-1.5 text-sm font-medium text-white bg-[#00E5FF] rounded-lg hover:opacity-90 transition"
-              >
-                إنشاء حساب
-              </Link>
-            </div>
-
-            {/* Mobile Button */}
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="
-                md:hidden 
-                text-white 
-                bg-[#00E5FF]
-                px-3 py-1.5 
-                rounded-lg 
-                hover:opacity-90
-                transition
-              "
-            >
-              ☰
-            </button>
-          </div>
+        <div className="hidden md:flex items-center gap-2">
+          <Button variant="ghost" size="sm">تسجيل الدخول</Button>
+          <Button variant="default" size="sm" className="bg-gradient-primary text-primary-foreground hover:opacity-90 shadow-glow">
+            إنشاء حساب
+          </Button>
         </div>
-      </div>
 
-      {/* Mobile Menu */}
-      {mobileMenuOpen && (
-        <div
-          className="
-          md:hidden 
-          bg-white dark:bg-black 
-          border-b border-gray-200 dark:border-white/10 
-          px-4 py-3
-        "
+        <button
+          onClick={() => setOpen(!open)}
+          className="md:hidden p-2 rounded-lg glass"
+          aria-label="Toggle menu"
         >
-          {sections.map((section) => (
+          {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        </button>
+      </nav>
+
+      {open && (
+        <div className="md:hidden glass max-w-7xl mx-auto rounded-2xl mt-2 p-4 animate-fade-in">
+          {sections.map((s) => (
             <a
-              key={section.id}
-              href={`#${section.id}`}
-              onClick={(e) => handleSmoothScroll(e, section.id)}
-              className={`
-                block py-3 border-b border-gray-200 dark:border-white/10
-                ${
-                  activeSection === section.id
-                    ? "text-[#00E5FF]"
-                    : "text-gray-600 dark:text-gray-300"
-                }
-              `}
+              key={s.id}
+              href={`#${s.id}`}
+              onClick={(e) => scrollTo(e, s.id)}
+              className={cn(
+                "block py-3 px-4 rounded-lg text-sm font-medium transition-smooth",
+                active === s.id ? "text-primary bg-secondary" : "text-muted-foreground"
+              )}
             >
-                {section.label}
+              {s.label}
             </a>
           ))}
-
-          {/* Auth Buttons (Mobile) */}
-          <div className="flex flex-col gap-2 mt-3">
-            <Link
-              to="/login"
-              className="w-full text-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-white border border-gray-300 dark:border-white/20 rounded-lg"
-            >
-              تسجيل الدخول
-            </Link>
-
-            <Link
-              to="/register"
-              className="w-full text-center px-4 py-2 text-sm font-medium text-white bg-[#00E5FF] rounded-lg"
-            >
-              إنشاء حساب
-            </Link>
+          <div className="flex gap-2 mt-3 pt-3 border-t border-border">
+            <Button variant="ghost" size="sm" className="flex-1">تسجيل الدخول</Button>
+            <Button size="sm" className="flex-1 bg-gradient-primary text-primary-foreground">إنشاء حساب</Button>
           </div>
         </div>
       )}
-    </nav>
+    </header>
   );
 };
 
-export default Nav;
+export default Navbar;
