@@ -1,10 +1,30 @@
-import { Button } from '@/shared/components/ui/button';
+// src/app/app.tsx
+import { RouterProvider, createRouter } from '@tanstack/react-router';
+// Import the generated route tree from the src folder
+// import { routeTree } from '../routeTree.gen';
+
+/**
+ * Router Initialization
+ * Using the generated routeTree to define all application paths.
+ */
+const router = createRouter({
+  // routeTree,
+  // For demonstration, we'll start with an empty route tree.
+   // In a real application, the routeTree would be generated based on the files in src/app/routes
+});
+
+/**
+ * Type Safety Registration
+ * This allows TypeScript to provide autocompletion for routes.
+ */
+declare module '@tanstack/react-router' {
+  interface Register {
+    router: typeof router;
+  }
+}
 
 export default function App() {
-   return (
-      <div className='flex h-screen flex-col items-center justify-center gap-4'>
-         <h1 className='text-3xl font-bold underline'>Hello world!</h1>
-         <Button>Click me</Button>
-      </div>
-   );
+  return (
+    <RouterProvider router={router} />
+  );
 }
