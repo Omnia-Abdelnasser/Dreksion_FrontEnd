@@ -5,11 +5,12 @@ import {
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
 } from "@/shared/components/ui/form";
 import { Input } from "@/shared/components/ui/input";
 import { Checkbox } from "@/shared/components/ui/checkbox";
 import { useForm, useWatch } from "react-hook-form";
-import { Phone, Lock, MapPin, User, ArrowLeft } from "lucide-react";
+import { Phone, Lock, MapPin, User, ArrowLeft, Mail } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import { useState } from "react";
@@ -32,8 +33,8 @@ const RegisterForm = ({ onSwitch }: { onSwitch?: () => void }) => {
       location: "",
       nationalId: "",
       licenseNumber: "",
-      profileImage: undefined,
-      licenseImage: undefined,
+      // profileImage: undefined,
+      // licenseImage: undefined,
 
       details: {
         haveAcar: false,
@@ -53,7 +54,12 @@ const buildFormData = (data: any) => {
   formData.append("gender", data.gender);
   formData.append("role", data.role);
 
-  if (data.location) formData.append("location", data.location);
+  if (data.location) {
+  formData.append(
+    "location",
+    JSON.stringify(data.location)
+  );
+}
   if (data.nationalId) formData.append("nationalId", data.nationalId);
   if (data.licenseNumber) formData.append("licenseNumber", data.licenseNumber);
 
@@ -171,18 +177,53 @@ const onSubmit = (data: any) => {
                 </FormItem>
               )} />
 
-              {/* password */}
-              <FormField control={form.control} name="password" render={({ field }) => (
-                <FormItem>
-                  <FormLabel>كلمة المرور</FormLabel>
-                  <FormControl>
-                    <div className="relative">
-                      <Lock className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4" />
-                      <Input type="password" {...field} className="pr-10 h-11" />
-                    </div>
-                  </FormControl>
-                </FormItem>
-              )} />
+              {/* Email */}
+              <FormField
+                control={form.control}
+                name="email"
+                rules={{ required: "البريد الإلكتروني مطلوب" }}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>البريد الإلكتروني</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Mail className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-primary/70" />
+                        <Input
+                          type="email"
+                          placeholder="name@email.com"
+                          {...field}
+                          className="pr-10 h-12"
+                        />
+                      </div>
+                    </FormControl>
+                    < FormMessage />
+                  </FormItem>
+                )}
+              />
+
+                            {/* Password */}
+                            <FormField
+                              control={form.control}
+                              name="password"
+                              rules={{ required: "كلمة المرور مطلوبة" }}
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>كلمة المرور</FormLabel>
+                                  <FormControl>
+                                    <div className="relative">
+                                      <Lock className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-primary/70" />
+                                      <Input
+                                        type="password"
+                                        placeholder="••••••••"
+                                        {...field}
+                                        className="pr-10 h-12"
+                                      />
+                                    </div>
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
 
               {/* location */}
               <FormField control={form.control} name="location" render={({ field }) => (
@@ -206,6 +247,33 @@ const onSubmit = (data: any) => {
                   </div>
                 </FormItem>
               )} />
+
+{/* nationalId */}
+<FormField
+  control={form.control}
+  name="nationalId"
+  render={({ field }) => (
+    <FormItem>
+      <FormLabel>الرقم القومي</FormLabel>
+
+      <FormControl>
+        <div className="relative">
+          <User className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-primary/70" />
+
+          <Input
+            {...field}
+            placeholder="أدخل الرقم القومي"
+            className="pr-10 h-12"
+            dir="rtl"
+          />
+        </div>
+      </FormControl>
+
+      <FormMessage />
+    </FormItem>
+  )}
+/>
+
 
               {/* role */}
               <div>
@@ -274,7 +342,8 @@ const onSubmit = (data: any) => {
                         <Input
                           type="file"
                           onChange={(e) =>
-                            field.onChange(e.target.files?.[0]?.name ?? "")
+                           field.onChange(e.target.files?.[0]
+                            )
                           }
                         />
                       </FormControl>

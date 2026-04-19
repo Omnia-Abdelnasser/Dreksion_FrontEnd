@@ -1,23 +1,22 @@
- export type RegisterValues = {
+// auth.type.ts
+export type RegisterValues = {
   firstName: string;
   lastName: string;
-  email?: string;
+  email: string;
   phone: string;
   password: string;
-  gender: "male" | "female" | "";
+  gender: string;
   role: "trainee" | "instructor";
-
-  location?: string;
-
-  nationalId?: string;
-
-  profileImage?: File;
+  location: string;
+  nationalId: string;
+  licenseNumber: string;
   licenseImage?: File;
-
-  licenseNumber?: string;
-
+  profileImage?: File;
+  owns_car: boolean;
+  can_drive_manual: boolean;
+  can_drive_automatic: boolean;
   details: {
     haveAcar: boolean;
-    carType: ("automatic" | "manual")[];
+    carType: string[];
   };
 };

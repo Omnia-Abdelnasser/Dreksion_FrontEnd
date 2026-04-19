@@ -5,6 +5,6 @@ import { registerUser } from "@/features/auth/services/auth.services";
 
 export const useRegister = () => {
   return useMutation({
-    mutationFn: registerUser,
+     mutationFn: (data: FormData) => registerUser(data),
   });
 };

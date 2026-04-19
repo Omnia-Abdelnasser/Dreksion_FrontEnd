@@ -1,8 +1,12 @@
 
-
 import { api } from "@/lib/api";
 
-export const registerUser = async (formData: FormData) => {
-  const res = await api.post("/auth/register", formData);
-  return res.data;
+export const registerUser = async (data: FormData) => {
+  try {
+    const res = await api.post("/auth/register", data);
+    return res.data;
+  } catch (err: any) {
+    console.log("ERROR RESPONSE:", err.response?.data);
+    throw err;
+  }
 };
