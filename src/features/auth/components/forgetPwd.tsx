@@ -20,50 +20,60 @@ const ForgetPasswordForm = () => {
 
   const onSubmit = (data: any) => {
     console.log("Password reset request:", data);
-    // TODO: handle API call for password reset
   };
 
   return (
-    <div className="flex min-h-screen flex-row-reverse">
-      {/* image */}
-      <div className="hidden w-1/2 md:block">
+    <div className="min-h-screen grid lg:grid-cols-2" dir="rtl">
+
+      {/* IMAGE  */}
+      <div className="relative hidden lg:block ">
         <img
           src="/auth_image2.jpeg"
           alt="forget-password"
-          className="h-screen w-full object-cover"
+          className="h-full w-full object-cover"
         />
+        <div className="absolute inset-0 bg-black/40" />
+
+        {/* <div className="absolute bottom-6 right-6 text-white max-w-sm">
+          <h2 className="text-2xl font-bold mb-2">
+            استرجاع كلمة المرور 
+          </h2>
+          <p className="text-sm text-white/80">
+            أدخل بريدك لإعادة تعيين كلمة المرور بسهولة
+          </p>
+        </div> */}
       </div>
 
-      {/* form */}
-      <div className="flex w-full md:w-1/2 items-center justify-center bg-gray-50 px-6">
-        <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-xl">
-          {/* title */}
-          <h2 className="mb-2 text-center text-2xl font-bold text-blue-600">
-            نسيت كلمة المرور
-          </h2>
+      {/* FORM */}
+      <div className="flex items-center justify-center px-6 py-10 bg-background order-1">
+        <div className="w-full max-w-md">
 
-          <p className="mb-6 text-center text-sm text-gray-500">
-            أدخل بريدك الإلكتروني لإعادة تعيين كلمة المرور الخاصة بك
-          </p>
+          <div className="mb-8 text-right">
+            <h2 className="text-3xl font-extrabold text-foreground">
+              نسيت كلمة المرور
+            </h2>
+            <p className="mt-2 text-muted-foreground">
+              أدخل بريدك لإرسال رابط إعادة التعيين
+            </p>
+          </div>
 
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-              {/* Email */}
+
+              {/* EMAIL */}
               <FormField
                 control={form.control}
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-left text-gray-700">
-                      البريد الإلكتروني
-                    </FormLabel>
+                    <FormLabel>البريد الإلكتروني</FormLabel>
                     <FormControl>
                       <Input
-                        dir="ltr"
+                        dir="rtl"
                         type="email"
-                        placeholder="example@email.com"
+                        placeholder="name@email.com"
                         {...field}
-                        className="text-gray-700"
+                        className="h-12 bg-input border-border focus-visible:ring-primary"
                       />
                     </FormControl>
                     <FormMessage />
@@ -71,28 +81,28 @@ const ForgetPasswordForm = () => {
                 )}
               />
 
-              {/* زر الإرسال */}
+              {/* BUTTON */}
               <Button
                 type="submit"
-                className="w-full rounded-xl bg-blue-600 py-6 text-white transition hover:bg-blue-700"
+                className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-xl"
               >
                 إرسال رابط إعادة التعيين
               </Button>
 
-              <div className="flex flex-col gap-2">
-                {/* رابط العودة لتسجيل الدخول */}
-                <p className="text-center text-sm text-gray-600">
-                  تذكّرت كلمة المرور؟{" "}
-                  <Link
-                    to="/"
-                    className="font-medium text-blue-600 hover:underline"
-                  >
-                    العودة لتسجيل الدخول
-                  </Link>
-                </p>
-              </div>
+              {/* BACK LINK */}
+              <p className="text-center text-sm text-muted-foreground">
+                تذكّرت كلمة المرور؟{" "}
+                <Link
+                  to="/login"
+                  className="text-primary font-semibold hover:underline"
+                >
+                  العودة لتسجيل الدخول
+                </Link>
+              </p>
+
             </form>
           </Form>
+
         </div>
       </div>
     </div>

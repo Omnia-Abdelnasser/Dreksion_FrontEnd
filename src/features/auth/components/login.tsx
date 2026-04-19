@@ -8,46 +8,49 @@ import {
   FormMessage,
 } from "@/shared/components/ui/form";
 import { Input } from "@/shared/components/ui/input";
-import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import { Mail, Lock, ArrowLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
-const LoginForm = () => {
-  const form = useForm({
-    defaultValues: {
-      email: "",
-      password: "",
-    },
+type LoginValues = { email: string; password: string };
+
+const LoginForm = ({ onSwitch }: { onSwitch?: () => void }) => {
+  const form = useForm<LoginValues>({
+    defaultValues: { email: "", password: "" },
   });
 
-  const onSubmit = (data: any) => {
+  const onSubmit = (data: LoginValues) => {
     console.log(data);
   };
-
+const navigate = useNavigate();
   return (
-    <div className="flex min-h-screen flex-row-reverse bg-gradient-to-br from-indigo-50 to-slate-100">
+    <div className="min-h-screen grid lg:grid-cols-2" dir="rtl">
 
-      {/* image*/}
-      <div className="hidden w-1/2 md:block">
+      {/*  Image */}
+      <div className="relative h-56 lg:h-auto">
         <img
           src="/auth_image2.jpeg"
-          alt="login"
-          className="h-screen w-full object-cover"
+          alt="تعلم القيادة"
+          className="w-full h-full object-cover"
         />
+      <div className="absolute inset-0 bg-black/40" />
+
+     
       </div>
+     
 
-      {/* form */}
-      <div className="flex w-full md:w-1/2 items-center justify-center bg-gray-50 px-6">
+      {/*  Form */}
+      <div className="flex items-center justify-center px-6 py-10 bg-background">
+        <div className="w-full max-w-md">
 
-        <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-xl">
-
-          {/* title */}
-          <h2 className="mb-2 text-center text-2xl font-bold text-blue-600">
-            تسجيل الدخول
-          </h2>
-
-          <p className="mb-6 text-center text-sm text-gray-500">
-            مرحبًا بعودتك سجّل الدخول إلى حسابك
-          </p>
+          <div className="mb-8 text-right">
+            <h2 className="text-3xl font-extrabold text-foreground">
+              تسجيل الدخول
+            </h2>
+            <p className="mt-2 text-muted-foreground">
+              مرحبًا بعودتك، سجّل الدخول إلى حسابك
+            </p>
+          </div>
 
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
@@ -56,19 +59,20 @@ const LoginForm = () => {
               <FormField
                 control={form.control}
                 name="email"
+                rules={{ required: "البريد الإلكتروني مطلوب" }}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-left text-gray-700">
-                      البريد الإلكتروني
-                    </FormLabel>
+                    <FormLabel>البريد الإلكتروني</FormLabel>
                     <FormControl>
-                      <Input
-                        dir="ltr"
-                        type="email"
-                        placeholder="example@email.com"
-                        {...field}
-                        className="text-gray-700"
-                      />
+                      <div className="relative">
+                        <Mail className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-primary/70" />
+                        <Input
+                          type="email"
+                          placeholder="name@email.com"
+                          {...field}
+                          className="pr-10 h-12"
+                        />
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -79,62 +83,64 @@ const LoginForm = () => {
               <FormField
                 control={form.control}
                 name="password"
+                rules={{ required: "كلمة المرور مطلوبة" }}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-left text-gray-700">
-                      كلمة المرور
-                    </FormLabel>
+                    <FormLabel>كلمة المرور</FormLabel>
                     <FormControl>
-                      <Input
-                        dir="ltr"
-                        type="password"
-                        placeholder="••••••••"
-                        {...field}
-                        className="text-gray-700"
-                      />
+                      <div className="relative">
+                        <Lock className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-primary/70" />
+                        <Input
+                          type="password"
+                          placeholder="••••••••"
+                          {...field}
+                          className="pr-10 h-12"
+                        />
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-{/* 
-              <p className="text-center text-sm text-gray-600">
-                <Link
-                  to="/forget-password"
-                  className="font-medium text-blue-600 hover:underline"
+
+              {/* Button */}
+              <Button
+                type="submit"
+                className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-xl"
+              >
+                تسجيل الدخول
+                <ArrowLeft className="mr-2 h-4 w-4" />
+              </Button>
+
+              {/* Switch */}
+              <div className="text-center text-sm text-muted-foreground">
+                ليس لديك حساب؟{" "}
+               
+                <button
+                  type="button"
+                 onClick={()=>navigate("/register")}
+                  className="text-primary hover:underline font-semibold"
+                >
+                  إنشاء حساب
+                </button>
+             
+              </div>
+
+              {/* Forgot */}
+              <div className="text-center">
+                <a
+                  href="/forget_Pwd"
+                  className="text-sm text-muted-foreground hover:text-primary transition"
                 >
                   نسيت كلمة المرور؟
-                </Link> 
-              </p> */}
-
-              {/* زر الدخول */}
-              <Button className="w-full rounded-xl bg-blue-600 py-6 text-white transition hover:bg-blue-700">
-                تسجيل الدخول
-              </Button>
-              <div className="flex flex-col gap-2">
-                {/* رابط التسجيل */}
-                <p className="text-center text-sm text-gray-600">
-                  ليس لديك حساب؟{" "}
-                  <Link
-                    to="/register"
-                    className="font-medium text-blue-600 hover:underline"
-                  >
-                    إنشاء حساب
-                  </Link>
-                </p>
-                <p className="text-center text-sm text-gray-600">
-                  <Link
-                    to="/forget_Pwd"
-                    className="font-medium text-blue-600 hover:underline"
-                  >
-                    نسيت كلمة المرور؟
-                  </Link>
-                </p>
+                </a>
               </div>
+
             </form>
           </Form>
         </div>
       </div>
+
     </div>
   );
 };
