@@ -1,4 +1,4 @@
-// 1. Definition of the Instructor Interface
+// 1. Interfaces Definitions
 export interface Instructor {
   id: string;
   name: string;
@@ -6,18 +6,29 @@ export interface Instructor {
   isVerified: boolean;
   rating: number;
   reviewsCount: number;
-  lat: number; // Latitude for maps
-  lng: number; // Longitude for maps
+  lat: number;
+  lng: number;
   location: string;
-  carType: "automatic" | "manual"; // Gearbox type
-  carModel: string; // Specific car info (e.g., Toyota Corolla)
+  carType: "automatic" | "manual";
+  carModel: string;
   experienceYears: number;
   hourlyRate: number;
-  distanceKm?: number; // Distance from user
+  distanceKm?: number;
   bio?: string;
 }
 
-// 2. Mock Instructors Data
+export interface Session {
+  id: string | number;
+  studentName: string;
+  instructorName?: string;
+  date: string;
+  time: string;
+  location: string;
+  price?: string;
+  status: "pending" | "confirmed" | "completed" | "cancelled" | "Upcoming";
+}
+
+// 2. Instructor Data
 export const mockInstructors: Instructor[] = [
   {
     id: "1",
@@ -55,10 +66,8 @@ export const mockInstructors: Instructor[] = [
   }
 ];
 
-// Alias for ease of use
 export const instructors = mockInstructors;
 
-// Labels for UI Translation
 export const carTypeLabel: Record<string, string> = {
   manual: "Manual",
   automatic: "Automatic"
@@ -80,10 +89,31 @@ export const studentLevels = [
   }
 ];
 
-// 4. Student Sessions Data
-export const studentSessions = [
+// 4. All Sessions Data (Consolidated)
+export const mockSessions: Session[] = [
   {
-    id: 1,
+    id: "s1",
+    studentName: "Ali Mohamed",
+    instructorName: "Taha Mohamed",
+    date: "2026/04/22",
+    time: "10:00 AM",
+    location: "October City - District 4",
+    price: "200",
+    status: "pending",
+  },
+  {
+    id: "s2",
+    studentName: "Sara Ahmed",
+    instructorName: "Taha Mohamed",
+    date: "2026/04/23",
+    time: "02:00 PM",
+    location: "Sheikh Zayed - Entrance 1",
+    price: "200",
+    status: "confirmed",
+  },
+  {
+    id: "s3",
+    studentName: "Self Student", // For student dashboard view
     instructorName: "Taha Mohamed",
     date: "2026/04/20",
     time: "10:00 AM",
@@ -91,3 +121,29 @@ export const studentSessions = [
     status: "Upcoming"
   }
 ];
+
+// Alias to support student-specific imports if needed
+export const studentSessions = mockSessions.filter(s => s.status === "Upcoming");
+
+// 5. UI Helpers
+export const statusLabel = (status: string): string => {
+  const labels: Record<string, string> = {
+    pending: "قيد الانتظار",
+    confirmed: "مؤكد",
+    completed: "مكتملة",
+    cancelled: "ملغاة",
+    Upcoming: "قادم"
+  };
+  return labels[status] || status;
+};
+
+export const statusColor = (status: string): string => {
+  const colors: Record<string, string> = {
+    pending: "bg-yellow-500/10 text-yellow-600 border-yellow-200",
+    confirmed: "bg-green-500/10 text-green-600 border-green-200",
+    completed: "bg-blue-500/10 text-blue-600 border-blue-200",
+    cancelled: "bg-red-500/10 text-red-600 border-red-200",
+    Upcoming: "bg-purple-500/10 text-purple-600 border-purple-200"
+  };
+  return colors[status] || "bg-gray-500/10 text-gray-600";
+};
