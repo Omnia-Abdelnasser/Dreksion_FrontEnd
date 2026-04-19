@@ -7,14 +7,14 @@ const features = [
   "شرح كامل لقواعد المرور",
   "تدريب عملي مع مدربين محترفين",
   "اختبارات وتقييم مستمر",
-  "محتوى فيديو عالي الجودة",
+  "محتوى  عالي الجودة",
 ];
 
 const Basics = () => {
   return (
     <section id="basics" className="py-24 px-6">
       <div className="max-w-6xl mx-auto">
-        <div className="glass rounded-3xl overflow-hidden grid md:grid-cols-2 gap-0 shadow-elegant">
+        <div className="glass rounded-3xl overflow-hidden grid md:grid-cols-2 gap-0 ">
           <motion.div
             initial={{ opacity: 0, x: 40 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -41,7 +41,7 @@ const Basics = () => {
               ))}
             </ul>
 
-            <Button size="lg" className="self-end bg-gradient-primary text-primary-foreground hover:opacity-90 shadow-glow rounded-full">
+            <Button size="lg" className="self-end bg-gradient-primary text-primary-foreground hover:opacity-90  rounded-full">
               ابدأ التعلم الآن
             </Button>
           </motion.div>
@@ -52,14 +52,14 @@ const Basics = () => {
             viewport={{ once: true }}
             className="relative min-h-[300px] md:min-h-full"
           >
-            {/* <img
-              src={lessonImage}
+            <img
+              src="/driving-lesson.jpg"
               alt="درس قيادة"
               loading="lazy"
               width={1024}
               height={1024}
               className="absolute inset-0 w-full h-full object-cover"
-            /> */}
+            />
             <div className="absolute inset-0 bg-gradient-to-l from-background/60 via-transparent to-transparent" />
           </motion.div>
         </div>

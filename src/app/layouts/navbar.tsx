@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Menu, X, Car } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useNavigate } from "react-router";
 
 const sections = [
   { id: "home", label: "الرئيسية" },
@@ -14,7 +15,7 @@ const sections = [
 const Navbar = () => {
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState("home");
-
+const navigate = useNavigate();
   const scrollTo = (e: React.MouseEvent, id: string) => {
     e.preventDefault();
     setActive(id);
@@ -24,12 +25,12 @@ const Navbar = () => {
 
   return (
     <header className="fixed top-0 inset-x-0 z-50 px-4 pt-4">
-      <nav className="glass max-w-7xl mx-auto rounded-2xl px-6 py-3 flex items-center justify-between shadow-elegant">
+      <nav className="glass max-w-7xl mx-auto rounded-2xl px-6 py-3 flex items-center justify-between ">
         <a href="#home" className="flex items-center gap-2 font-bold text-lg">
-          <span className="w-9 h-9 rounded-xl bg-gradient-primary flex items-center justify-center shadow-glow">
+          <span className="w-9 h-9 rounded-xl bg-gradient-primary flex items-center justify-center ">
             <Car className="w-5 h-5 text-primary-foreground" />
           </span>
-          <span className="text-gradient">القيادة الذكية</span>
+          <span className="text-gradient">دركسيون</span>
         </a>
 
         <ul className="hidden md:flex items-center gap-1">
@@ -55,8 +56,8 @@ const Navbar = () => {
         </ul>
 
         <div className="hidden md:flex items-center gap-2">
-          <Button variant="ghost" size="sm">تسجيل الدخول</Button>
-          <Button variant="default" size="sm" className="bg-gradient-primary text-primary-foreground hover:opacity-90 shadow-glow">
+          <Button onClick={()=>navigate('/login')} variant="ghost" size="sm">تسجيل الدخول</Button>
+          <Button onClick={()=>navigate('/register')} variant="default" size="sm" className="bg-gradient-primary text-primary-foreground hover:opacity-90 ">
             إنشاء حساب
           </Button>
         </div>
@@ -86,8 +87,8 @@ const Navbar = () => {
             </a>
           ))}
           <div className="flex gap-2 mt-3 pt-3 border-t border-border">
-            <Button variant="ghost" size="sm" className="flex-1">تسجيل الدخول</Button>
-            <Button size="sm" className="flex-1 bg-gradient-primary text-primary-foreground">إنشاء حساب</Button>
+            <Button onClick={() => navigate('/login')} variant="ghost" size="sm" className="flex-1">تسجيل الدخول</Button>
+            <Button onClick={() => navigate('/register')} size="sm" className="flex-1 bg-gradient-primary text-primary-foreground">إنشاء حساب</Button>
           </div>
         </div>
       )}

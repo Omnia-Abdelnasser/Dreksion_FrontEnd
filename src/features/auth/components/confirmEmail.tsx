@@ -7,7 +7,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/shared/components/ui/form";
-import { Input } from "@/shared/components/ui/input";
 import {
   InputOTP,
   InputOTPGroup,
@@ -15,42 +14,34 @@ import {
 } from "@/shared/components/ui/input-otp";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
-import { Lock, ShieldCheck, ArrowLeft } from "lucide-react";
+import { ShieldCheck, MailCheck, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 
-type ResetValues = {
+type ConfirmEmailValues = {
   otp: string;
-  password: string;
-  confirmPassword: string;
 };
 
-const ResetPasswordForm = () => {
-  const form = useForm<ResetValues>({
-    defaultValues: { otp: "", password: "", confirmPassword: "" },
+const ConfirmEmailForm = () => {
+  const form = useForm<ConfirmEmailValues>({
+    defaultValues: { otp: "" },
   });
 
-  const onSubmit = (data: ResetValues) => {
-    if (data.password !== data.confirmPassword) {
-      toast.error("كلمتا المرور غير متطابقتين");
-      return;
-    }
+  const onSubmit = (data: ConfirmEmailValues) => {
     console.log(data);
-    toast.success("تم إعادة تعيين كلمة المرور بنجاح");
+    toast.success("تم تأكيد البريد الإلكتروني بنجاح");
   };
 
   return (
     <div className="min-h-screen grid lg:grid-cols-2" dir="rtl">
-
-      {/* Image */}
+      
+      {/* IMAGE */}
       <div className="relative hidden lg:block">
         <img
           src="/auth_image2.jpeg"
-          alt="reset-password"
+          alt="confirm-email"
           className="h-full w-full object-cover"
         />
         <div className="absolute inset-0 bg-black/40" />
-
-     
       </div>
 
       {/* FORM */}
@@ -58,11 +49,12 @@ const ResetPasswordForm = () => {
         <div className="w-full max-w-md">
 
           <div className="mb-8 text-right">
-            <h2 className="text-3xl font-extrabold">
-              إعادة تعيين كلمة المرور
+            <h2 className="text-3xl font-extrabold flex items-center gap-2">
+              <MailCheck className="h-6 w-6 text-primary" />
+              تأكيد البريد الإلكتروني
             </h2>
             <p className="mt-2 text-muted-foreground">
-              أدخل رمز التحقق وكلمة المرور الجديدة
+              أدخل رمز التحقق المرسل إلى بريدك الإلكتروني
             </p>
           </div>
 
@@ -106,62 +98,27 @@ const ResetPasswordForm = () => {
                 )}
               />
 
-              {/* PASSWORD */}
-              <FormField
-                control={form.control}
-                name="password"
-                rules={{ required: "كلمة المرور مطلوبة" }}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>كلمة المرور</FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <Lock className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-primary/70" />
-                        <Input
-                          dir="rtl"
-                          type="password"
-                          placeholder="••••••••"
-                          {...field}
-                          className="pr-10 h-12 bg-input border-border"
-                        />
-                      </div>
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-
-              {/* CONFIRM PASSWORD */}
-              <FormField
-                control={form.control}
-                name="confirmPassword"
-                rules={{ required: "تأكيد كلمة المرور مطلوب" }}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>تأكيد كلمة المرور</FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <Lock className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-primary/70" />
-                        <Input
-                          type="password"
-                          placeholder="••••••••"
-                          {...field}
-                          className="pr-10 h-12 bg-input border-border"
-                        />
-                      </div>
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-
               {/* BUTTON */}
               <Button className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-xl">
-                إعادة تعيين كلمة المرور
+                تأكيد البريد الإلكتروني
                 <ArrowLeft className="mr-2 h-4 w-4" />
               </Button>
 
+              {/* RESEND */}
+              <p className="text-center text-sm text-muted-foreground">
+                لم يصلك الكود؟{" "}
+                <button
+                  type="button"
+                  onClick={() => toast.info("تم إرسال كود جديد")}
+                  className="text-primary font-semibold hover:underline"
+                >
+                  إعادة الإرسال
+                </button>
+              </p>
+
               {/* BACK */}
               <p className="text-center text-sm text-muted-foreground">
-                تذكّرت كلمة المرور؟{" "}
+                العودة إلى{" "}
                 <Link
                   to="/login"
                   className="text-primary font-semibold hover:underline"
@@ -179,4 +136,4 @@ const ResetPasswordForm = () => {
   );
 };
 
-export default ResetPasswordForm;
+export default ConfirmEmailForm;
