@@ -79,7 +79,7 @@ const onSubmit = (data: any) => {
 
   mutate(formData, {
     onSuccess: (res: any) => {
-      toast.success(res?.message || "User created successfully");
+      toast.success(res?.message || "تم إنشاء الحساب بنجاح");
 
       console.log("registered email:", res?.email);
 
@@ -94,7 +94,7 @@ const onSubmit = (data: any) => {
 
     onError: (err: any) => {
       toast.error(
-        err?.response?.data?.message || "Something went wrong"
+        err?.response?.data?.message || "حدث خطأ أثناء إنشاء الحساب"
       );
     },
   });

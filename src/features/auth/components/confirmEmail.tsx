@@ -13,8 +13,8 @@ import {
   InputOTPSlot,
 } from "@/shared/components/ui/input-otp";
 import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
-import { useVerifyEmail } from "../hooks/auth.hook";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useResendOTP, useVerifyEmail } from "../hooks/auth.hook";
 import { ShieldCheck, MailCheck, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { ConfirmEmailValues } from "../types/auth.type";
@@ -23,6 +23,8 @@ import { Mail } from "lucide-react";
 const ConfirmEmailForm = () => {
   const navigate = useNavigate();
   const { mutate } = useVerifyEmail();
+    const { mutate: resend,isPending } = useResendOTP();
+
   const form = useForm<ConfirmEmailValues>({
     defaultValues: { otp: "", email: "" },
   });
@@ -47,6 +49,26 @@ const ConfirmEmailForm = () => {
       },
     });
   };
+  // 
+const location = useLocation();
+const email = location.state?.email;
+const handleResend = () => {
+  if (!email) {
+    toast.error("اكتب الإيميل الأول");
+    return;
+  }
+
+  resend(email, {
+    onSuccess: (res: any) => {
+      toast.success(res?.data?.message || "تم إرسال كود جديد");
+    },
+    onError: (err: any) => {
+      toast.error(
+        err?.response?.data?.message || "حدث خطأ"
+      );
+    },
+  });
+};
 
   return (
     <div className="min-h-screen grid lg:grid-cols-2" dir="rtl">
@@ -148,13 +170,16 @@ const ConfirmEmailForm = () => {
               {/* RESEND */}
               <p className="text-center text-sm text-muted-foreground">
                 لم يصلك الكود؟{" "}
-                <button
+                {/* <button
                   type="button"
                   onClick={() => toast.info("تم إرسال كود جديد")}
                   className="text-primary font-semibold hover:underline"
                 >
                   إعادة الإرسال
-                </button>
+                </button> */}
+                <Button onClick={handleResend} disabled={isPending}>
+  {isPending ? "جاري الإرسال..." : "إعادة إرسال الكود"}
+</Button>
               </p>
 
               {/* BACK */}
