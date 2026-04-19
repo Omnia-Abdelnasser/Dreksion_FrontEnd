@@ -16,7 +16,7 @@ import { InstructorsMap } from "@/shared/components/ui/InstructorsMap";
 import { mockInstructors } from "@/shared/lib/mock-data";
 
 export default function SearchPage() {
-  // 1. States للتحكم في الفلترة والعرض
+  
   const [view, setView] = useState<"list" | "map">("list");
   const [price, setPrice] = useState([300]);
   const [rating, setRating] = useState([1]);
@@ -35,10 +35,10 @@ export default function SearchPage() {
     );
 
   return (
-    <div className="flex min-h-screen flex-col bg-background text-foreground" dir="rtl">
+    <div className="flex min-h-screen flex-col bg-background text-foreground" dir="rtl ">
 
       {/* Top Search Bar */}
-      <div className="border-b border-border bg-card shadow-sm">
+      <div className="border-b border-border bg-card shadow-sm py-24">
         <div className="container mx-auto max-w-7xl px-4 py-4">
           <div className="flex flex-wrap items-center gap-3">
             <div className="relative min-w-[240px] flex-1">

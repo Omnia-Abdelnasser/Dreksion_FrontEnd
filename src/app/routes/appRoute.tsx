@@ -3,7 +3,6 @@ import { Route, Routes } from 'react-router-dom';
 import ForgetPasswordForm from '@/features/auth/components/forgetPwd';
 import RegisterForm from '@/features/auth/components/register';
 import ResetPasswordForm from '@/features/auth/components/reset_Pwd';
-import SearchPage from '@/features/instructors/components/search';
 
 import LoginForm from '../../features/auth/components/login';
 import InstructorProfile from '../../features/instructors/components/instructor.$id';
@@ -19,7 +18,7 @@ const AppRoute = () => {
          <Route path='/reset_Pwd' element={<ResetPasswordForm />} />
          <Route path='/home' element={<Home />} />
          <Route path='/instructors' element={<Instructors />} />
-
+         <Route path='/instructor/:id' element={<InstructorProfile />} />
       </Routes>
    );
 };

@@ -9,9 +9,11 @@ export interface Instructor {
   lat: number; // Latitude for maps
   lng: number; // Longitude for maps
   location: string;
-  carType: string;
+  carType: "automatic" | "manual"; // Gearbox type
+  carModel: string; // Specific car info (e.g., Toyota Corolla)
   experienceYears: number;
   hourlyRate: number;
+  distanceKm?: number; // Distance from user
   bio?: string;
 }
 
@@ -19,33 +21,37 @@ export interface Instructor {
 export const mockInstructors: Instructor[] = [
   {
     id: "1",
-    name: "طه محمد",
+    name: "Taha Mohamed",
     avatarUrl: "https://github.com/shadcn.png",
     isVerified: true,
     rating: 4.8,
     reviewsCount: 120,
     lat: 30.0444,
     lng: 31.2357,
-    location: "أكتوبر",
-    carType: "toyota",
+    location: "October City",
+    carType: "manual",
+    carModel: "Toyota Corolla 2022",
     experienceYears: 5,
     hourlyRate: 200,
-    bio: "مدرب محترف بخبرة كبيرة في تعليم القيادة للمبتدئين."
+    distanceKm: 2.5,
+    bio: "Professional instructor with extensive experience teaching beginners."
   },
   {
     id: "2",
-    name: "كابتن أحمد علي",
+    name: "Captain Ahmed Ali",
     avatarUrl: "https://github.com/shadcn.png",
     isVerified: false,
     rating: 4.5,
     reviewsCount: 85,
     lat: 30.0131, 
     lng: 30.9876,
-    location: "الشيخ زايد",
-    carType: "hyundai",
+    location: "Sheikh Zayed",
+    carType: "automatic",
+    carModel: "Hyundai Elantra 2023",
     experienceYears: 3,
     hourlyRate: 150,
-    bio: "متخصص في تعليم مهارات الركن والقيادة في الزحام."
+    distanceKm: 5.8,
+    bio: "Specialized in parking skills and driving in heavy traffic."
   }
 ];
 
@@ -54,25 +60,23 @@ export const instructors = mockInstructors;
 
 // Labels for UI Translation
 export const carTypeLabel: Record<string, string> = {
-  toyota: "تويوتا",
-  hyundai: "هيونداي",
-  manual: "مانيوال",
-  automatic: "أوتوماتيك"
+  manual: "Manual",
+  automatic: "Automatic"
 };
 
 // 3. Student Progress Data
 export const studentLevels = [
   {
     id: 1,
-    title: "أساسيات القيادة",
+    title: "Driving Basics",
     progress: 100,
-    skills: [{ name: "تشغيل المحرك", done: true }]
+    skills: [{ name: "Starting Engine", done: true }]
   },
   {
     id: 2,
-    title: "المهارات المتقدمة",
+    title: "Advanced Skills",
     progress: 45,
-    skills: [{ name: "الركن الموازي", done: true }]
+    skills: [{ name: "Parallel Parking", done: true }]
   }
 ];
 
@@ -80,10 +84,10 @@ export const studentLevels = [
 export const studentSessions = [
   {
     id: 1,
-    instructorName: "طه محمد",
-    date: "٢٠٢٦/٠٤/٢٠",
-    time: "١٠:٠٠ ص",
-    location: "أكتوبر",
-    status: "قادمة"
+    instructorName: "Taha Mohamed",
+    date: "2026/04/20",
+    time: "10:00 AM",
+    location: "October City",
+    status: "Upcoming"
   }
 ];
