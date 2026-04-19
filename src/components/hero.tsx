@@ -21,7 +21,6 @@ const Hero = () => {
         <div className="absolute inset-0" style={{ background: "var(--gradient-overlay)" }} />
       </div>
 
-    
       <div className="absolute top-1/4 right-0 w-72 h-72 bg-primary/10 rounded-full blur-2xl -z-10" />
       <div className="absolute bottom-0 left-0 w-72 h-72 bg-primary-glow/5 rounded-full blur-2xl -z-10" />
 
