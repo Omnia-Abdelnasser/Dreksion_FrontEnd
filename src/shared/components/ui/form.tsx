@@ -135,5 +135,6 @@ export {
    FormField,
    FormItem,
    FormLabel,
-   FormMessage,
+   FormMessage
 };
+
