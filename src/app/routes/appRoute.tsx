@@ -13,7 +13,7 @@ const AppRoute = () => {
       <Route path="/register" element={<RegisterForm />} />
       <Route path="/forget_Pwd" element={<ForgetPasswordForm />} />
       <Route path="/reset_Pwd" element={<ResetPasswordForm />} />
-      <Route path="/confirm_email" element={<ConfirmEmailForm />} />
+      <Route path="/confirmEmail" element={<ConfirmEmailForm />} />
       <Route path="/" element={<Home />} />
     </Routes>
   );

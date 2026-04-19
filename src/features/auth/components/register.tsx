@@ -11,7 +11,7 @@ import { Input } from "@/shared/components/ui/input";
 import { Checkbox } from "@/shared/components/ui/checkbox";
 import { useForm, useWatch } from "react-hook-form";
 import { Phone, Lock, MapPin, User, ArrowLeft, Mail } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useState } from "react";
 import { getLocationName } from "@/features/auth/services/locationApi";
@@ -19,8 +19,8 @@ import { useRegister } from "@/features/auth/hooks/auth.hook";
 import { RegisterValues } from "@/features/auth/types/auth.type";
 const RegisterForm = ({ onSwitch }: { onSwitch?: () => void }) => {
   const [loadingLocation, setLoadingLocation] = useState(false);
-    const { mutate, isPending } = useRegister();
-
+    const { mutate} = useRegister();
+  const navigate = useNavigate();
   const form = useForm<RegisterValues>({
     defaultValues: {
       firstName: "",
@@ -82,6 +82,14 @@ const onSubmit = (data: any) => {
       toast.success(res?.message || "User created successfully");
 
       console.log("registered email:", res?.email);
+
+      form.reset();
+
+      navigate("/confirmEmail", {
+        state: {
+          email: res?.email, 
+        },
+      });
     },
 
     onError: (err: any) => {

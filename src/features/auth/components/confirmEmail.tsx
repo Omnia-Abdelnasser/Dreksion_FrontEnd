@@ -13,22 +13,39 @@ import {
   InputOTPSlot,
 } from "@/shared/components/ui/input-otp";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useVerifyEmail } from "../hooks/auth.hook";
 import { ShieldCheck, MailCheck, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
-
-type ConfirmEmailValues = {
-  otp: string;
-};
-
+import { ConfirmEmailValues } from "../types/auth.type";
+import { Input } from "@/shared/components/ui/input";
+import { Mail } from "lucide-react";
 const ConfirmEmailForm = () => {
+  const navigate = useNavigate();
+  const { mutate } = useVerifyEmail();
   const form = useForm<ConfirmEmailValues>({
-    defaultValues: { otp: "" },
+    defaultValues: { otp: "", email: "" },
   });
 
-  const onSubmit = (data: ConfirmEmailValues) => {
-    console.log(data);
-    toast.success("تم تأكيد البريد الإلكتروني بنجاح");
+   const onSubmit = (data: ConfirmEmailValues) => {
+    mutate({ code: data.otp, email: data.email }, {
+      onSuccess: (res: any) => {
+        toast.success(res?.message || "تم تأكيد الحساب بنجاح");
+        form.reset();
+
+            navigate("/login", {
+        state: {
+          email: res?.email, 
+        },
+      });
+    },
+
+      onError: (err: any) => {
+        toast.error(
+          err?.response?.data?.message || "الكود غير صحيح"
+        );
+      },
+    });
   };
 
   return (
@@ -60,6 +77,30 @@ const ConfirmEmailForm = () => {
 
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+
+                   {/* Email */}
+              <FormField
+                control={form.control}
+                name="email"
+                rules={{ required: "البريد الإلكتروني مطلوب" }}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>البريد الإلكتروني</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Mail className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-primary/70" />
+                        <Input
+                          type="email"
+                          placeholder="name@email.com"
+                          {...field}
+                          className="pr-10 h-12"
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
               {/* OTP */}
               <FormField

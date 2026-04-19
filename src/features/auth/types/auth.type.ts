@@ -20,3 +20,8 @@ export type RegisterValues = {
     carType: string[];
   };
 };
+
+ export type ConfirmEmailValues = {
+  otp: string;
+  email: string;
+};
