@@ -95,11 +95,6 @@ const Hero = () => {
     className="relative w-[320px] md:w-[380px] object-contain drop-shadow-xl"
   />
 
-  {/* small floating badge */}
-  <div className="absolute top-6 right-10 glass px-3 py-1.5 rounded-full text-xs text-foreground shadow-sm">
-    🚗 سهل وسريع
-  </div>
-
 </div>
       </div>
     </section>
