@@ -1,34 +1,62 @@
-import { CheckCircle2, X, Clock, Calendar, MapPin } from "lucide-react";
+import { CheckCircle2, X, Clock, Calendar, MapPin, Loader2 } from "lucide-react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/shared/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/components/ui/tabs";
 import { Avatar, AvatarFallback } from "@/shared/components/ui/avatar";
 import { Badge } from "@/shared/components/ui/badge";
+import { toast } from "sonner";
+import { getAllBookings, updateBookingStatus } from "../services/instructor-services";
+import { Session } from "../types/instructor-types";
 
-/**
- * 1. Manual Type Definitions
- * Added to resolve the 'implicitly has any type' error
- */
-interface Session {
-  id: string | number;
-  studentName: string;
-  date: string;
-  time: string;
-  location: string;
-  price: string;
-  status: "pending" | "confirmed" | "completed" | "cancelled";
-}
+// Helper functions for UI mapping
+const statusColor = (status: string) => {
+  switch (status) {
+    case 'pending': return 'border-yellow-200 bg-yellow-50 text-yellow-600';
+    case 'confirmed': return 'border-green-200 bg-green-50 text-green-600';
+    case 'cancelled': return 'border-red-200 bg-red-50 text-red-600';
+    case 'completed': return 'border-blue-200 bg-blue-50 text-blue-600';
+    default: return 'border-gray-200 bg-gray-50 text-gray-600';
+  }
+};
 
-/**
- * 2. Data Imports
- * Make sure the path matches your project structure. 
- * If '@/' alias fails, use relative paths like '../../lib/mock-data'
- */
-import { mockSessions, statusColor, statusLabel } from "@/shared/lib/mock-data";
+const statusLabel = (status: string) => {
+  switch (status) {
+    case 'pending': return 'قيد الانتظار';
+    case 'confirmed': return 'مؤكدة';
+    case 'cancelled': return 'ملغاة';
+    case 'completed': return 'مكتملة';
+    default: return status;
+  }
+};
 
 export function BookingsView() {
-  // Casting to Session[] to ensure type safety
-  const allSessions = mockSessions as Session[];
+  const queryClient = useQueryClient();
+
+  // 1. Fetch real bookings from Backend
+  const { data: allSessions = [], isLoading } = useQuery<Session[]>({
+    queryKey: ['instructor-all-bookings'],
+    queryFn: getAllBookings,
+  });
+
+  // 2. Action Mutation (Approve/Reject)
+  const { mutate: handleStatusChange, isPending: isUpdating } = useMutation({
+    mutationFn: ({ id, status }: { id: string; status: 'confirmed' | 'cancelled' }) => 
+      updateBookingStatus(id, status),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['instructor-all-bookings'] });
+      queryClient.invalidateQueries({ queryKey: ['instructor-dashboard'] });
+      toast.success("Updated successfully");
+    },
+    onError: () => toast.error("Operation failed")
+  });
+
   const pending = allSessions.filter((s) => s.status === "pending");
+
+  if (isLoading) return (
+    <div className="flex h-[400px] items-center justify-center">
+      <Loader2 className="h-10 w-10 animate-spin text-primary" />
+    </div>
+  );
 
   return (
     <div className="space-y-6" dir="rtl">
@@ -48,7 +76,15 @@ export function BookingsView() {
 
         <TabsContent value="pending" className="mt-6 space-y-4">
           {pending.length > 0 ? (
-            pending.map((s) => <BookingCard key={s.id} s={s} showActions />)
+            pending.map((s) => (
+              <BookingCard 
+                key={s.id} 
+                s={s} 
+                showActions 
+                onAction={(status) => handleStatusChange({ id: s.id, status })} 
+                isUpdating={isUpdating}
+              />
+            ))
           ) : (
             <div className="py-20 text-center text-muted-foreground border-2 border-dashed rounded-3xl">
               لا توجد طلبات حجز معلقة حالياً
@@ -76,9 +112,11 @@ export function BookingsView() {
 interface BookingCardProps {
   s: Session;
   showActions?: boolean;
+  onAction?: (status: 'confirmed' | 'cancelled') => void;
+  isUpdating?: boolean;
 }
 
-function BookingCard({ s, showActions }: BookingCardProps) {
+function BookingCard({ s, showActions, onAction, isUpdating }: BookingCardProps) {
   return (
     <div className="rounded-3xl border border-border bg-card p-5 shadow-sm transition-all hover:shadow-md">
       <div className="flex flex-wrap items-center gap-4">
@@ -114,12 +152,19 @@ function BookingCard({ s, showActions }: BookingCardProps) {
         </div>
       </div>
 
-      {showActions && (
+      {showActions && onAction && (
         <div className="mt-5 flex gap-3 border-t border-border pt-5">
-          <Button size="sm" className="flex-1 gap-2 rounded-xl font-bold py-5">
+          <Button 
+            disabled={isUpdating}
+            onClick={() => onAction('confirmed')}
+            size="sm" 
+            className="flex-1 gap-2 rounded-xl font-bold py-5"
+          >
             <CheckCircle2 className="h-4 w-4" /> قبول الطلب
           </Button>
           <Button 
+            disabled={isUpdating}
+            onClick={() => onAction('cancelled')}
             size="sm" 
             variant="outline" 
             className="flex-1 gap-2 rounded-xl font-bold py-5 text-destructive hover:bg-destructive/5 border-destructive/20"

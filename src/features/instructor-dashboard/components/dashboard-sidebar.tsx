@@ -8,25 +8,24 @@ import {
   Star,
   TrendingUp,
   User,
-  ShieldCheck, // Added for Admin
-  Users as UsersIcon, // Added for Admin
-  Settings // Added for Admin
+  ShieldCheck,
+  Users as UsersIcon,
+  Settings
 } from 'lucide-react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
 } from '@/shared/components/ui/avatar';
+// افترضت إن عندك Hook بيجيب بيانات اليوزر الحالي
+// import { useAuth } from '@/features/auth/hooks/useAuth'; 
 
 interface SidebarProps {
   role?: 'instructor' | 'student' | 'admin';
 }
 
-const instructorImg = 'https://github.com/shadcn.png';
-
-// 1. Define Admin Nav Items
 const adminNavItems = [
   { to: '/dashboard/admin', label: 'نظرة عامة', icon: LayoutDashboard },
   { to: '/dashboard/admin/instructors', label: 'مراجعة المدربين', icon: ShieldCheck },
@@ -34,7 +33,6 @@ const adminNavItems = [
   { to: '/dashboard/admin/settings', label: 'إعدادات النظام', icon: Settings },
 ] as const;
 
-// 2. Define Instructor Nav Items (The original ones)
 const instructorNavItems = [
   { to: '/dashboard/instructor', label: 'نظرة عامة', icon: LayoutDashboard },
   { to: '/dashboard/instructor/bookings', label: 'طلبات الحجز', icon: Calendar },
@@ -45,14 +43,24 @@ const instructorNavItems = [
   { to: '/dashboard/instructor/profile', label: 'الملف الشخصي', icon: User },
 ] as const;
 
+// يمكنك إضافة studentNavItems هنا لاحقاً بنفس الطريقة
+
 export function DashboardSidebar({ role }: SidebarProps) {
   const location = useLocation();
+  const navigate = useNavigate();
+  // const { user, logout } = useAuth(); // استبدلها ببيانات الـ Context الحقيقية
 
-  // 3. Dynamic Selection Logic
   const navItems = role === 'admin' ? adminNavItems : instructorNavItems;
+
+  const handleLogout = () => {
+    // logout(); 
+    console.log('Logout triggered');
+    navigate('/login');
+  };
 
   return (
     <aside className='hidden w-72 flex-col border-l border-border bg-card lg:flex' dir='rtl'>
+      {/* Logo Section */}
       <Link
         to='/home'
         className='flex items-center gap-2 border-b border-border p-6'
@@ -65,9 +73,9 @@ export function DashboardSidebar({ role }: SidebarProps) {
         </span>
       </Link>
 
-      <nav className='flex-1 space-y-1 overflow-y-auto p-4'>
+      {/* Navigation Links */}
+      <nav className='flex-1 space-y-1 overflow-y-auto p-4 custom-scrollbar'>
         {navItems.map((item) => {
-          // Logic check for active link
           const active = location.pathname === item.to;
           return (
             <Link
@@ -75,7 +83,7 @@ export function DashboardSidebar({ role }: SidebarProps) {
               to={item.to}
               className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold transition-all duration-200 ${
                 active
-                  ? 'bg-primary text-primary-foreground shadow-md shadow-primary/20'
+                  ? 'bg-primary text-primary-foreground shadow-md shadow-primary/20 scale-[1.02]'
                   : 'text-muted-foreground hover:bg-secondary/80 hover:text-foreground'
               }`}
             >
@@ -88,26 +96,28 @@ export function DashboardSidebar({ role }: SidebarProps) {
         })}
       </nav>
 
+      {/* User Info & Logout */}
       <div className='space-y-2 border-t border-border p-4'>
-        <div className='flex items-center gap-3 rounded-2xl bg-secondary/50 p-3'>
+        <div className='flex items-center gap-3 rounded-2xl bg-secondary/50 p-3 border border-border/50'>
           <Avatar className='h-10 w-10 border-2 border-background shadow-sm'>
-            <AvatarImage src={instructorImg} />
-            <AvatarFallback className='font-bold'>طه</AvatarFallback>
+            <AvatarImage src={undefined} /> {/* اربطها بـ user.avatarUrl */}
+            <AvatarFallback className='font-bold bg-primary/10 text-primary uppercase'>
+              طه
+            </AvatarFallback>
           </Avatar>
           <div className='flex-1 overflow-hidden text-right'>
-            <p className='truncate text-sm font-bold text-foreground'>
+            <p className='truncate text-sm font-black text-foreground'>
               طه محمد
             </p>
-            <p className='truncate text-[10px] font-bold text-primary'>
-              {/* Dynamic Role Label */}
+            <p className='truncate text-[10px] font-black text-primary/80 uppercase tracking-widest'>
               {role === 'admin' ? 'مدير النظام' : role === 'instructor' ? 'مدرب معتمد' : 'مستخدم'}
             </p>
           </div>
         </div>
 
         <button
-          onClick={() => console.log('Logout triggered')}
-          className='flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold text-destructive transition-all duration-200 hover:bg-destructive/10'
+          onClick={handleLogout}
+          className='flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-black text-destructive transition-all duration-200 hover:bg-destructive/10 active:scale-95'
         >
           <LogOut className='h-5 w-5' />
           تسجيل الخروج

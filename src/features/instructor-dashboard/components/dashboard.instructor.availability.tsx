@@ -1,14 +1,39 @@
-import React, { useState } from "react";
-import { Plus, Trash2 } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Plus, Trash2, Save, Loader2 } from "lucide-react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/shared/components/ui/button";
+import { toast } from "sonner";
+import { getAvailability, updateAvailability } from "../services/instructor-services";
 
 const days = ["السبت", "الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة"];
 const slots = ["08:00", "10:00", "12:00", "14:00", "16:00", "18:00", "20:00"];
 
 export function Availability() {
-  const [available, setAvailable] = useState<Set<string>>(
-    new Set(["السبت-10:00", "الأحد-12:00", "الاثنين-16:00", "الثلاثاء-08:00", "الأربعاء-14:00"])
-  );
+  const queryClient = useQueryClient();
+  const [available, setAvailable] = useState<Set<string>>(new Set());
+
+  // 1. Fetch data
+  const { data: initialData, isLoading } = useQuery({
+    queryKey: ['instructor-availability'],
+    queryFn: getAvailability,
+  });
+
+  // Sync state with fetched data
+  useEffect(() => {
+    if (initialData) {
+      setAvailable(new Set(initialData));
+    }
+  }, [initialData]);
+
+  // 2. Save mutation
+  const { mutate: saveSchedule, isPending: isSaving } = useMutation({
+    mutationFn: (data: string[]) => updateAvailability(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['instructor-availability'] });
+      toast.success("تم حفظ جدول المواعيد بنجاح");
+    },
+    onError: () => toast.error("فشل في حفظ المواعيد")
+  });
 
   const toggle = (key: string) => {
     setAvailable((prev) => {
@@ -19,10 +44,16 @@ export function Availability() {
     });
   };
 
+  const handleSave = () => {
+    saveSchedule(Array.from(available));
+  };
+
+  if (isLoading) return <div className="flex h-[400px] items-center justify-center"><Loader2 className="animate-spin h-10 w-10 text-primary" /></div>;
+
   return (
     <div className="space-y-6" dir="rtl">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-foreground">إدارة المواعيد</h1>
+        <h1 className="text-2xl font-bold text-foreground italic">إدارة المواعيد</h1>
         <Button className="gap-2 rounded-xl font-bold">
           <Plus className="h-4 w-4" /> إضافة موعد يدوي
         </Button>
@@ -77,13 +108,19 @@ export function Availability() {
         <div className="mt-8 flex justify-end gap-3 border-t border-border pt-6">
           <Button 
             variant="outline" 
+            disabled={isSaving}
             className="gap-2 rounded-xl text-destructive hover:bg-destructive/10 border-destructive/20 font-bold"
             onClick={() => setAvailable(new Set())}
           >
-            <Trash2 className="h-4 w-4" /> مسح الجدول بالكامل
+            <Trash2 className="h-4 w-4" /> مسح الجدول
           </Button>
-          <Button className="rounded-xl px-10 font-bold shadow-lg shadow-primary/20">
-            حفظ جدول المواعيد
+          <Button 
+            onClick={handleSave}
+            disabled={isSaving}
+            className="rounded-xl px-10 font-bold shadow-lg shadow-primary/20 min-w-[160px]"
+          >
+            {isSaving ? <Loader2 className="animate-spin h-4 w-4 ml-2" /> : <Save className="h-4 w-4 ml-2" />}
+            حفظ الجدول
           </Button>
         </div>
       </div>
