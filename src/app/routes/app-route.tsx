@@ -5,9 +5,16 @@ import ConfirmEmailForm from '@/features/auth/components/confirm-email';
 import ForgetPasswordForm from '@/features/auth/components/forget-password';
 import RegisterForm from '@/features/auth/components/register';
 import ResetPasswordForm from '@/features/auth/components/reset-password';
-import LoginForm from '../../features/auth/components/login';
 
-// Dashboard Components (Instructor)
+// --- Admin Features ---
+import {
+   AdminDashboardIndex,
+   AdminSettings,
+   AdminUsers,
+   InstructorsReview,
+} from '@/features/dashboard-admin/components/admin-components';
+
+// Dashboard Components (Instructor/Chat)
 import { InstructorChat } from '@/features/dashboard.chat';
 import BookingPage from '@/features/instructor-dashboard/components/booking.$id';
 import { Availability } from '@/features/instructor-dashboard/components/dashboard.instructor.availability';
@@ -18,18 +25,20 @@ import { InstructorReviews } from '@/features/instructor-dashboard/components/da
 import { InstructorStudents } from '@/features/instructor-dashboard/components/dashboard.instructor.students';
 import { DashboardLayout } from '@/features/instructor-dashboard/dashboard-layout';
 
-// --- Admin Features (The part we added) ---
-import { 
-  AdminDashboardIndex, 
-  InstructorsReview, 
-  AdminUsers, 
-  AdminSettings 
-} from '@/features/dashboard-admin/components/admin-components'; 
+// --- Student Features ---
+import {
+   SessionsPage,
+   StudentDashboardIndex,
+   StudentProfile,
+   StudentProgressPage,
+} from '@/features/student-dashboard/components/student-components';
+
+import LoginForm from '../../features/auth/components/login';
+import PublicProfile from '../../features/instructors/components/instructor.$id';
 
 // Public Pages
 import Home from '../pages/home';
 import Instructors from '../pages/instructors';
-import PublicProfile from '../../features/instructors/components/instructor.$id';
 
 const AppRoute = () => {
    return (
@@ -44,7 +53,7 @@ const AppRoute = () => {
          <Route path='/instructors' element={<Instructors />} />
          <Route path='/instructor/:id' element={<PublicProfile />} />
          <Route path='/booking/:id' element={<BookingPage />} />
-         
+
          {/* Instructor Dashboard (Nested Routes) */}
          <Route
             path='/dashboard/instructor'
@@ -59,22 +68,36 @@ const AppRoute = () => {
             <Route path='chat' element={<InstructorChat />} />
          </Route>
 
-         {/* Admin Dashboard (Added by Taha) */}
+         {/* Admin Dashboard */}
          <Route
             path='/dashboard/admin'
             element={<DashboardLayout role='admin' />}
          >
-            {/* Main Admin Overview */}
             <Route index element={<AdminDashboardIndex />} />
-            
-            {/* Review New Instructor Requests */}
             <Route path='instructors' element={<InstructorsReview />} />
-            
-            {/* Manage Platform Users */}
             <Route path='users' element={<AdminUsers />} />
-            
-            {/* System Configurations */}
             <Route path='settings' element={<AdminSettings />} />
+         </Route>
+
+         {/* Student Dashboard (Updated by Taha) */}
+         <Route
+            path='/dashboard/student'
+            element={<DashboardLayout role='student' />}
+         >
+            {/* Index: /dashboard/student */}
+            <Route index element={<StudentDashboardIndex />} />
+
+            {/* Sessions: /dashboard/student/sessions */}
+            <Route path='sessions' element={<SessionsPage />} />
+
+            {/* Profile: /dashboard/student/profile */}
+            <Route path='profile' element={<StudentProfile />} />
+
+            {/* Progress: /dashboard/student/progress */}
+            <Route path='progress' element={<StudentProgressPage />} />
+
+            {/* Chat: /dashboard/student/chat (Added) */}
+            <Route path='chat' element={<InstructorChat />} />
          </Route>
 
          {/* 404 Fallback */}

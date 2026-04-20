@@ -6,11 +6,11 @@ import {
   LogOut,
   MessageCircle,
   Star,
-  TrendingUp,
   User,
   ShieldCheck,
   Users as UsersIcon,
-  Settings
+  Settings,
+  BookOpen
 } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
@@ -19,13 +19,12 @@ import {
   AvatarFallback,
   AvatarImage,
 } from '@/shared/components/ui/avatar';
-// افترضت إن عندك Hook بيجيب بيانات اليوزر الحالي
-// import { useAuth } from '@/features/auth/hooks/useAuth'; 
 
 interface SidebarProps {
   role?: 'instructor' | 'student' | 'admin';
 }
 
+// --- Admin Navigation ---
 const adminNavItems = [
   { to: '/dashboard/admin', label: 'نظرة عامة', icon: LayoutDashboard },
   { to: '/dashboard/admin/instructors', label: 'مراجعة المدربين', icon: ShieldCheck },
@@ -33,24 +32,36 @@ const adminNavItems = [
   { to: '/dashboard/admin/settings', label: 'إعدادات النظام', icon: Settings },
 ] as const;
 
+// --- Instructor Navigation ---
 const instructorNavItems = [
   { to: '/dashboard/instructor', label: 'نظرة عامة', icon: LayoutDashboard },
   { to: '/dashboard/instructor/bookings', label: 'طلبات الحجز', icon: Calendar },
   { to: '/dashboard/instructor/availability', label: 'المواعيد', icon: Clock },
-  { to: '/dashboard/instructor/students', label: 'قائمة الطلاب', icon: TrendingUp },
+  { to: '/dashboard/instructor/students', label: 'قائمة الطلاب', icon: UsersIcon },
   { to: '/dashboard/instructor/chat', label: 'الرسائل', icon: MessageCircle },
   { to: '/dashboard/instructor/reviews', label: 'التقييمات', icon: Star },
   { to: '/dashboard/instructor/profile', label: 'الملف الشخصي', icon: User },
 ] as const;
 
-// يمكنك إضافة studentNavItems هنا لاحقاً بنفس الطريقة
+// --- Student Navigation (Updated with Chat) ---
+const studentNavItems = [
+  { to: '/dashboard/student', label: 'نظرة عامة', icon: LayoutDashboard },
+  { to: '/dashboard/student/sessions', label: 'جلساتي التدريبية', icon: Calendar },
+  { to: '/dashboard/student/progress', label: 'مستوى التقدم', icon: BookOpen },
+  { to: '/dashboard/student/chat', label: 'الرسائل', icon: MessageCircle }, // تم إضافة الشات هنا
+  { to: '/dashboard/student/profile', label: 'الملف الشخصي', icon: User },
+] as const;
 
 export function DashboardSidebar({ role }: SidebarProps) {
   const location = useLocation();
   const navigate = useNavigate();
-  // const { user, logout } = useAuth(); // استبدلها ببيانات الـ Context الحقيقية
 
-  const navItems = role === 'admin' ? adminNavItems : instructorNavItems;
+  const navItems = 
+    role === 'admin' 
+      ? adminNavItems 
+      : role === 'instructor' 
+        ? instructorNavItems 
+        : studentNavItems;
 
   const handleLogout = () => {
     // logout(); 
@@ -100,17 +111,21 @@ export function DashboardSidebar({ role }: SidebarProps) {
       <div className='space-y-2 border-t border-border p-4'>
         <div className='flex items-center gap-3 rounded-2xl bg-secondary/50 p-3 border border-border/50'>
           <Avatar className='h-10 w-10 border-2 border-background shadow-sm'>
-            <AvatarImage src={undefined} /> {/* اربطها بـ user.avatarUrl */}
-            <AvatarFallback className='font-bold bg-primary/10 text-primary uppercase'>
+            <AvatarImage src={undefined} />
+            <AvatarFallback className='font-bold bg-primary/10 text-primary uppercase italic'>
               طه
             </AvatarFallback>
           </Avatar>
           <div className='flex-1 overflow-hidden text-right'>
-            <p className='truncate text-sm font-black text-foreground'>
+            <p className='truncate text-sm font-black text-foreground italic'>
               طه محمد
             </p>
-            <p className='truncate text-[10px] font-black text-primary/80 uppercase tracking-widest'>
-              {role === 'admin' ? 'مدير النظام' : role === 'instructor' ? 'مدرب معتمد' : 'مستخدم'}
+            <p className='truncate text-[10px] font-black text-primary/80 uppercase tracking-widest italic'>
+              {role === 'admin' 
+                ? 'مدير النظام' 
+                : role === 'instructor' 
+                  ? 'مدرب معتمد' 
+                  : 'متدرب نشط'}
             </p>
           </div>
         </div>
