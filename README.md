@@ -14,6 +14,9 @@
 
 ## 📁 Project Structure
 
+# ui/ux :
+[figma](https://www.figma.com/design/QRCUXacXCsPnzk1hbbS2RA/index.?node-id=2-106&t=TsWiOUQVa2nPFWPb-1)
+
 ```
 src/
 ├── main.tsx           # Application entry point
