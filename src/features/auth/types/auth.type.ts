@@ -1,3 +1,4 @@
+import { mockInstructors } from "@/shared/lib/mock-data";
 // auth.type.ts
 
 export type LoginValues = {
@@ -38,3 +39,5 @@ export type AuthResponse = {
   user: any; // Or specific user type
   message: string;
 };
+
+const pending = mockInstructors.filter((i: any) => i.status === "pending");
