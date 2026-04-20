@@ -1,8 +1,9 @@
-import Hero from "@/components/hero";
-import HowItWorks from "@/components/steps";
-import Navbar from "../layouts/navbar";
-import Footer from "@/components/footer";
-import Basics from "@/components/basic";
+import Hero from "@/shared/components/hero"
+import Navbar from "../layouts/navbar"
+import HowItWorks from "@/shared/components/steps"
+import Basics from "@/shared/components/basic"
+import Footer from "@/shared/components/footer"
+
 const Home = () => {
   return (
   <main className="min-h-screen bg-background text-foreground">

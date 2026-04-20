@@ -1,4 +1,3 @@
-import React from "react";
 import { CheckCircle2, X, Clock, Calendar, MapPin } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/components/ui/tabs";

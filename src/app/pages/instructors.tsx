@@ -1,5 +1,5 @@
 import InstructorFilters from '@/features/instructors/components/instructor-filters';
-import Footer from '@/components/footer';
+import Footer from '@/shared/components/footer';
 import Navbar from '../layouts/navbar';
 
 const Instructors = () => {

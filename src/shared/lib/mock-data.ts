@@ -28,6 +28,25 @@ export interface Session {
   status: "pending" | "confirmed" | "completed" | "cancelled" | "Upcoming";
 }
 
+// --- Chat Interfaces (NEW) ---
+export interface ChatMessage {
+  id: string;
+  senderId: string;
+  text: string;
+  time: string;
+}
+
+export interface Conversation {
+  id: string;
+  name: string;
+  avatar: string;
+  lastMessage: string;
+  lastTime: string;
+  unread: number;
+  online: boolean;
+  messages: ChatMessage[];
+}
+
 // 2. Instructor Data
 export const mockInstructors: Instructor[] = [
   {
@@ -113,7 +132,7 @@ export const mockSessions: Session[] = [
   },
   {
     id: "s3",
-    studentName: "Self Student", // For student dashboard view
+    studentName: "Self Student", 
     instructorName: "Taha Mohamed",
     date: "2026/04/20",
     time: "10:00 AM",
@@ -122,10 +141,41 @@ export const mockSessions: Session[] = [
   }
 ];
 
+// 5. Chat Data (NEW)
+export const mockConversations: Conversation[] = [
+  {
+    id: "c1",
+    name: "كريم سامي",
+    avatar: "https://i.pravatar.cc/150?u=u1",
+    lastMessage: "تمام، نتقابل في المعاد المحدد",
+    lastTime: "10:30 ص",
+    unread: 2,
+    online: true,
+    messages: [
+      { id: "m1", senderId: "other", text: "يا كابتن، ممكن نأخر حصة بكرة ساعة؟", time: "09:00 ص" },
+      { id: "m2", senderId: "me", text: "مفيش مشكلة، نتقابل الساعة 11 بدل 10", time: "10:15 ص" },
+      { id: "m3", senderId: "other", text: "تمام، نتقابل في المعاد المحدد", time: "10:30 ص" },
+    ]
+  },
+  {
+    id: "c2",
+    name: "نور هشام",
+    avatar: "https://i.pravatar.cc/150?u=u2",
+    lastMessage: "شكراً جداً يا كابتن طه",
+    lastTime: "أمس",
+    unread: 0,
+    online: false,
+    messages: [
+      { id: "m4", senderId: "other", text: "عايزة أركز بكرة على الركن الموازي", time: "05:00 م" },
+      { id: "m5", senderId: "me", text: "أكيد، هنخصص الحصة كلها للركن", time: "06:00 م" },
+    ]
+  }
+];
+
 // Alias to support student-specific imports if needed
 export const studentSessions = mockSessions.filter(s => s.status === "Upcoming");
 
-// 5. UI Helpers
+// 6. UI Helpers
 export const statusLabel = (status: string): string => {
   const labels: Record<string, string> = {
     pending: "قيد الانتظار",

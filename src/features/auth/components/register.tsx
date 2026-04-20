@@ -1,235 +1,429 @@
-import { useState } from 'react';
-
-import { ArrowLeft, Lock, Phone } from 'lucide-react';
-import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
-
-import { Button } from '@/shared/components/ui/button';
+import { Button } from "@/shared/components/ui/button";
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
-} from '@/shared/components/ui/form';
-import { Input } from '@/shared/components/ui/input';
+  FormMessage,
+} from "@/shared/components/ui/form";
+import { Input } from "@/shared/components/ui/input";
+import { Checkbox } from "@/shared/components/ui/checkbox";
+import { useForm, useWatch } from "react-hook-form";
+import { Phone, Lock, MapPin, User, ArrowLeft, Mail } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import { useState } from "react";
+import { getLocationName } from "@/features/auth/services/location-api";
+import { useRegister } from "@/features/auth/hooks/auth.hook";
+import { RegisterValues } from "@/features/auth/types/auth.type";
+const RegisterForm = ({ onSwitch: _onSwitch }: { onSwitch?: () => void }) => {
+  const [loadingLocation, setLoadingLocation] = useState(false);
+    const { mutate} = useRegister();
+  const navigate = useNavigate();
+  const form = useForm<RegisterValues>({
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      phone: "",
+      password: "",
+      gender: "",
+      role: "trainee",
+      location: "",
+      nationalId: "",
+      licenseNumber: "",
+      // profileImage: undefined,
+      // licenseImage: undefined,
 
-type RegisterValues = {
-   first_name: string;
-   last_name: string;
-   phone: string;
-   license_image: string;
-   password: string;
-   gender: 'male' | 'female' | '';
-   location: string;
-   role: 'trainee' | 'instructor';
-   license_degree: string;
-   owns_car: boolean;
-   can_drive_manual: boolean;
-   can_drive_automatic: boolean;
+      details: {
+        haveAcar: false,
+        carType: [],
+      },
+    },
+  });
+
+const buildFormData = (data: any) => {
+  const formData = new FormData();
+
+  formData.append("firstName", data.firstName);
+  formData.append("lastName", data.lastName);
+  formData.append("email", data.email);
+  formData.append("phone", data.phone);
+  formData.append("password", data.password);
+  formData.append("gender", data.gender);
+  formData.append("role", data.role);
+
+  if (data.location) {
+  formData.append(
+    "location",
+    JSON.stringify(data.location)
+  );
+}
+  if (data.nationalId) formData.append("nationalId", data.nationalId);
+  if (data.licenseNumber) formData.append("licenseNumber", data.licenseNumber);
+
+  if (data.profileImage)
+    formData.append("profileImage", data.profileImage);
+
+  if (data.licenseImage)
+    formData.append("licenseImage", data.licenseImage);
+
+  formData.append("details", JSON.stringify(data.details));
+
+  return formData;
 };
 
-const RegisterForm = ({ onSwitch }: { onSwitch?: () => void }) => {
-   const [loadingLocation, setLoadingLocation] = useState(false);
+const onSubmit = (data: any) => {
+  const formData = buildFormData(data);
 
-   const form = useForm<RegisterValues>({
-      defaultValues: {
-         first_name: '',
-         last_name: '',
-         phone: '',
-         license_image: '',
-         password: '',
-         gender: '',
-         location: '',
-         role: 'trainee',
-         license_degree: '',
-         owns_car: false,
-         can_drive_manual: false,
-         can_drive_automatic: false,
-      },
-   });
+  mutate(formData, {
+    onSuccess: (res: any) => {
+      toast.success(res?.message || "تم إنشاء الحساب بنجاح");
 
-   const handleGetLocation = () => {
-      if (!navigator.geolocation) {
-         toast.error('المتصفح لا يدعم تحديد الموقع');
-         return;
-      }
+      console.log("registered email:", res?.email);
 
-      setLoadingLocation(true);
+      form.reset();
 
-      navigator.geolocation.getCurrentPosition(
-         (pos) => {
-            const loc = `${pos.coords.latitude.toFixed(
-               4
-            )}, ${pos.coords.longitude.toFixed(4)}`;
+      navigate("/confirmEmail", {
+        state: {
+          email: res?.email, 
+        },
+      });
+    },
 
-            form.setValue('location', loc);
-            toast.success('تم تحديد الموقع');
-            setLoadingLocation(false);
-         },
-         () => {
-            toast.error('تعذر الوصول للموقع');
-            setLoadingLocation(false);
-         }
+    onError: (err: any) => {
+      toast.error(
+        err?.response?.data?.message || "حدث خطأ أثناء إنشاء الحساب"
       );
-   };
+    },
+  });
+};
+  const role = useWatch({ control: form.control, name: "role" });
+  const gender = useWatch({ control: form.control, name: "gender" });
 
-   const onSubmit = (data: RegisterValues) => {
-      console.log(data);
-      toast.success('تم إنشاء الحساب بنجاح');
-   };
+  const handleGetLocation = () => {
+    if (!navigator.geolocation) {
+      toast.error("المتصفح لا يدعم تحديد الموقع");
+      return;
+    }
 
-   return (
-      <div className='grid min-h-screen lg:grid-cols-2' dir='rtl'>
-         {/* 🖼️ IMAGE RIGHT */}
-         <div className='relative order-1 h-56 lg:order-2 lg:h-auto'>
-            <img
-               src='/driving-lesson.jpg'
-               alt='تعلم القيادة'
-               className='h-full w-full object-cover'
-            />
+    setLoadingLocation(true);
 
-            <div className='absolute inset-0 bg-black/40' />
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        try {
+          const lat = pos.coords.latitude;
+          const lon = pos.coords.longitude;
 
-            <div className='absolute bottom-6 right-6 max-w-xs text-white lg:max-w-sm'>
-               <h2 className='mb-2 text-2xl font-bold lg:text-3xl'>
-                  ابدأ رحلتك اليوم 🚗
-               </h2>
-               <p className='text-xs text-white/80 lg:text-sm'>
-                  تعلم القيادة مع أفضل المدربين في مصر
-               </p>
-            </div>
-         </div>
+          const locationName = await getLocationName(lat, lon);
 
-         {/* 🧾 FORM LEFT */}
-         <div className='order-2 flex items-center justify-center bg-background px-6 py-10 lg:order-1'>
-            <div className='w-full max-w-md'>
-               <div className='mb-6 text-right'>
-                  <h2 className='text-3xl font-extrabold'>إنشاء حساب جديد</h2>
-                  <p className='mt-2 text-muted-foreground'>
-                     ابدأ رحلتك معنا اليوم
-                  </p>
-               </div>
+          form.setValue("location", locationName);
+          toast.success("تم تحديد الموقع");
+        } catch {
+          toast.error("فشل جلب اسم المكان");
+        } finally {
+          setLoadingLocation(false);
+        }
+      },
+      () => {
+        toast.error("تعذر الوصول للموقع");
+        setLoadingLocation(false);
+      }
+    );
+  };
 
-               <Form {...form}>
-                  <form
-                     onSubmit={form.handleSubmit(onSubmit)}
-                     className='space-y-4'
+ 
+  return (
+    <div className="min-h-screen grid lg:grid-cols-2" dir="rtl">
+
+      {/* FORM */}
+      <div className="flex items-center justify-center px-6 py-10 order-2 lg:order-1">
+        <div className="w-full max-w-md">
+
+          <h2 className="text-3xl font-extrabold mb-2">
+            إنشاء حساب جديد
+          </h2>
+          <p className="text-muted-foreground mb-6">
+            ابدأ رحلتك معنا اليوم
+          </p>
+
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+
+              {/* name */}
+              <div className="grid grid-cols-2 gap-3">
+                <FormField control={form.control} name="firstName" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>الاسم الأول</FormLabel>
+                    <FormControl>
+                      <Input {...field} className="h-11" />
+                    </FormControl>
+                  </FormItem>
+                )} />
+
+                <FormField control={form.control} name="lastName" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>الاسم الأخير</FormLabel>
+                    <FormControl>
+                      <Input {...field} className="h-11" />
+                    </FormControl>
+                  </FormItem>
+                )} />
+              </div>
+
+              {/* phone */}
+              <FormField control={form.control} name="phone" render={({ field }) => (
+                <FormItem>
+                  <FormLabel>الهاتف</FormLabel>
+                  <FormControl>
+                    <div className="relative">
+                      <Phone className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4" />
+                      <Input dir="ltr" {...field} className="pr-10 h-11" />
+                    </div>
+                  </FormControl>
+                </FormItem>
+              )} />
+
+              {/* Email */}
+              <FormField
+                control={form.control}
+                name="email"
+                rules={{ required: "البريد الإلكتروني مطلوب" }}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>البريد الإلكتروني</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Mail className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-primary/70" />
+                        <Input
+                          type="email"
+                          placeholder="name@email.com"
+                          {...field}
+                          className="pr-10 h-12"
+                        />
+                      </div>
+                    </FormControl>
+                    < FormMessage />
+                  </FormItem>
+                )}
+              />
+
+                            {/* Password */}
+                            <FormField
+                              control={form.control}
+                              name="password"
+                              rules={{ required: "كلمة المرور مطلوبة" }}
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>كلمة المرور</FormLabel>
+                                  <FormControl>
+                                    <div className="relative">
+                                      <Lock className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-primary/70" />
+                                      <Input
+                                        type="password"
+                                        placeholder="••••••••"
+                                        {...field}
+                                        className="pr-10 h-12"
+                                      />
+                                    </div>
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+
+              {/* location */}
+              <FormField control={form.control} name="location" render={({ field }) => (
+                <FormItem>
+                  <FormLabel>الموقع</FormLabel>
+                  <div className="flex gap-2">
+                    <FormControl>
+                      <div className="relative flex-1">
+                        <MapPin className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4" />
+                        <Input {...field} className="pr-10 h-11" />
+                      </div>
+                    </FormControl>
+
+                    <Button
+                      type="button"
+                      onClick={handleGetLocation}
+                      disabled={loadingLocation}
+                    >
+                      📍
+                    </Button>
+                  </div>
+                </FormItem>
+              )} />
+
+{/* nationalId */}
+<FormField
+  control={form.control}
+  name="nationalId"
+  render={({ field }) => (
+    <FormItem>
+      <FormLabel>الرقم القومي</FormLabel>
+
+      <FormControl>
+        <div className="relative">
+          <User className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-primary/70" />
+
+          <Input
+            {...field}
+            placeholder="أدخل الرقم القومي"
+            className="pr-10 h-12"
+            dir="rtl"
+          />
+        </div>
+      </FormControl>
+
+      <FormMessage />
+    </FormItem>
+  )}
+/>
+
+
+              {/* role */}
+              <div>
+                <p className="flex items-center gap-2 mb-2">
+                  <User className="h-4 w-4" /> نوع الحساب
+                </p>
+
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => form.setValue("role", "trainee")}
+                    className={`w-1/2 py-2 rounded-lg border ${
+                      role === "trainee" ? "bg-primary text-white" : ""
+                    }`}
                   >
-                     {/* First + Last */}
-                     <div className='grid grid-cols-2 gap-3'>
-                        <FormField
-                           control={form.control}
-                           name='first_name'
-                           render={() => (
-                              <FormItem>
-                                 <FormLabel>الاسم الأول</FormLabel>
-                                 <FormControl>
-                                    <Input className='h-11' />
-                                 </FormControl>
-                              </FormItem>
-                           )}
+                    متدرب
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => form.setValue("role", "instructor")}
+                    className={`w-1/2 py-2 rounded-lg border ${
+                      role === "instructor" ? "bg-primary text-white" : ""
+                    }`}
+                  >
+                    مدرب
+                  </button>
+                </div>
+              </div>
+
+              {/* gender */}
+              <div>
+                <p className="mb-2">النوع</p>
+
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => form.setValue("gender", "male")}
+                    className={`w-1/2 py-2 border rounded-lg ${
+                      gender === "male" ? "bg-accent text-white" : ""
+                    }`}
+                  >
+                    ذكر
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => form.setValue("gender", "female")}
+                    className={`w-1/2 py-2 border rounded-lg ${
+                      gender === "female" ? "bg-accent text-white" : ""
+                    }`}
+                  >
+                    أنثى
+                  </button>
+                </div>
+              </div>
+
+              {/* instructor ONLY */}
+              {role === "instructor" && (
+                <div className="space-y-4 p-4 border rounded-xl bg-muted/20">
+
+                  <FormField control={form.control} name="licenseImage" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>صورة الرخصة</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="file"
+                          onChange={(e) =>
+                           field.onChange(e.target.files?.[0]
+                            )
+                          }
                         />
+                      </FormControl>
+                    </FormItem>
+                  )} />
 
-                        <FormField
-                           control={form.control}
-                           name='last_name'
-                           render={() => (
-                              <FormItem>
-                                 <FormLabel>الاسم الأخير</FormLabel>
-                                 <FormControl>
-                                    <Input className='h-11' />
-                                 </FormControl>
-                              </FormItem>
-                           )}
-                        />
-                     </div>
+                  <FormField control={form.control} name="licenseNumber" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>رقم الرخصة</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )} />
 
-                     {/* Phone */}
-                     <FormField
-                        control={form.control}
-                        name='phone'
-                        render={() => (
-                           <FormItem>
-                              <FormLabel>الهاتف</FormLabel>
-                              <FormControl>
-                                 <div className='relative'>
-                                    <Phone className='absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2' />
-                                    <Input dir='ltr' className='h-11 pr-10' />
-                                 </div>
-                              </FormControl>
-                           </FormItem>
-                        )}
-                     />
+                  {[
+                    { name: "owns_car", label: "أمتلك سيارة" },
+                    { name: "can_drive_manual", label: "مانيوال" },
+                    { name: "can_drive_automatic", label: "أوتوماتيك" },
+                  ].map((item) => (
+                    <FormField
+                      key={item.name}
+                      control={form.control}
+                      name={item.name as any}
+                      render={({ field }) => (
+                        <FormItem className="flex items-center gap-2">
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value as boolean}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                          <FormLabel>{item.label}</FormLabel>
+                        </FormItem>
+                      )}
+                    />
+                  ))}
+                </div>
+              )}
 
-                     {/* Password */}
-                     <FormField
-                        control={form.control}
-                        name='password'
-                        render={() => (
-                           <FormItem>
-                              <FormLabel>كلمة المرور</FormLabel>
-                              <FormControl>
-                                 <div className='relative'>
-                                    <Lock className='absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2' />
-                                    <Input
-                                       type='password'
-                                       className='h-11 pr-10'
-                                    />
-                                 </div>
-                              </FormControl>
-                           </FormItem>
-                        )}
-                     />
+              {/* submit */}
+              <Button type="submit" className="w-full h-12">
+                إنشاء الحساب
+                <ArrowLeft className="mr-2 h-4 w-4" />
+              </Button>
+              {/* switch to login */}
+              <p className="text-center text-sm text-muted-foreground">
+                لديك حساب؟{" "}
+                <Link
+                  to="/login"
+                  className="text-primary font-semibold hover:underline"
+                >
+                  تسجيل الدخول
+                </Link>
+              </p>
 
-                     {/* Location */}
-                     <FormField
-                        control={form.control}
-                        name='location'
-                        render={() => (
-                           <FormItem>
-                              <FormLabel>الموقع</FormLabel>
-
-                              <div className='flex gap-2'>
-                                 <FormControl>
-                                    <Input className='h-11' />
-                                 </FormControl>
-
-                                 <Button
-                                    type='button'
-                                    onClick={handleGetLocation}
-                                    disabled={loadingLocation}
-                                 >
-                                    {loadingLocation ? '...' : '📍'}
-                                 </Button>
-                              </div>
-                           </FormItem>
-                        )}
-                     />
-
-                     {/* Submit */}
-                     <Button type='submit' className='h-12 w-full'>
-                        إنشاء الحساب
-                        <ArrowLeft className='mr-2 h-4 w-4' />
-                     </Button>
-
-                     {/* Switch */}
-                     <div className='text-center text-sm text-muted-foreground'>
-                        لديك حساب؟{' '}
-                        <button
-                           type='button'
-                           onClick={onSwitch}
-                           className='font-semibold text-primary hover:underline'
-                        >
-                           تسجيل الدخول
-                        </button>
-                     </div>
-                  </form>
-               </Form>
-            </div>
-         </div>
+            </form>
+          </Form>
+        </div>
       </div>
-   );
+
+      {/* IMAGE */}
+      <div className="relative hidden lg:block">
+        <img
+          src="/auth_image2.jpeg"
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-black/40" />
+      </div>
+
+    </div>
+  );
 };
 
 export default RegisterForm;
